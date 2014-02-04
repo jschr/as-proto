@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="assets/css/drop-theme-arrows-bounce.css" />
+    <style>
+      html, body { 
+        height: 100%; 
+        padding: 0;
+        margin: 0;
+        background: #000;
+        font-family: SourceSansProRegular, Arial, sans-serif;
+        color: #333;
+      }
+
+      .viewport {
+        position: relative;
+        height: 100%;
+        background-size: auto 100%;
+        margin: 0 auto;
+        background-position: center center;
+        background-repeat: no-repeat;
+      }
+
+      .object {
+        position: absolute;
+        -webkit-filter: drop-shadow(0.1em -0.5em 2em #333);
+      }
+
+      .object img {
+        height: 100%;
+        /*-webkit-animation: pulse 5s infinite;*/
+      }
+
+      @-webkit-keyframes pulse {
+        0%, 100%   { opacity: 0.8; }
+        20%, 60% { opacity: 1; }
+      }
+
+      .hotspot {
+        position: absolute;
+        z-index: 100;
+      }
+
+      .drop {
+        z-index: 1000;
+      }
+
+      .unselectable {
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      .drop-content {
+        /*border: 3px solid #f4c400;
+        border-radius: 10px;*/
+      }
+
+      .drop-element.drop-theme-arrows-bounce .drop-content {
+        padding: 0;
+      }
+
+      .list {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+      }
+
+      .list li {
+        padding: 12px 18px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        background: #fff;
+
+        -webkit-transition: all 0.5 ease-in;
+      }
+
+      .list li.active {
+        background: #f0f0f0;
+      }
+
+      .list li:first-child {
+        border-radius: 4px 4px 0 0;
+      }
+
+      .list li:last-child {
+        border-bottom: none;
+        border-radius: 0 0 4px 4px;
+      }
+
+      .list li:hover,
+      .list li:active {
+        background: #51b4b6;
+      }
+
+      .price {
+        font-size: 90%;
+        opacity: 0.7  ;
+      }
+
+      .list .description {
+        color: #51b4b6;
+      }
+
+      .list li:hover .description,
+      .list li:active .description,
+      .list li:hover .price,
+      .list li:active .price {
+        color: #fff;
+      }
+
+      .title {
+        position: absolute;
+        top: 0;
+        left: -20%;
+        right: 0;
+        margin-top: -6.2vmin;
+        margin-left: 0;
+        font-size: 1.8vmin;
+        color: #fff;
+        opacity: 0.8;
+        text-align: right;
+        line-height: 2.3vmin;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
+      .message {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        text-align: center;
+        padding: 1%;
+      }
+
+      .message-inner {
+        display: inline-block;
+        padding: 4px 6px;
+        border-radius: 2px;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.35);
+        opacity: 0.8
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="viewport"></div>
+    <div class="message">
+      <div class="message-inner">
+        Tap an item to swap.
+      </div>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script src="assets/js/drop.js"></script>
+    <script>
+
+      // var objects = {
+      //   bg: {
+      //     url: 'bg.jpg',
+      //   },
+      //   chair1: {
+      //     url: 'chair1.jpg',
+      //     scale: 67.2,
+      //     top: 32.7,
+      //     left: 36.7,
+      //     description: 'Leather Executive Chair',
+      //     price: 299.00
+      //   },
+      //   chair2: {
+      //     url: 'chair2.jpg',
+      //     scale: 67.5,
+      //     top: 32.6,
+      //     left: 37.2,
+      //     description: 'Executive Deluxe High-Back Chair',
+      //     price: 175.95
+      //   },
+      //   chair3: {
+      //     url: 'chair3.jpg',
+      //     scale: 66.8,
+      //     top: 33.3,
+      //     left: 40.1,
+      //     description: 'Tech Mesh Executive Chair',
+      //     price: 545.00
+      //   }
+      // };
+
+      var objects = {
+        bg: {
+          url: 'assets/images/room.png',
+        },
+        toilet1: {
+          url: 'assets/images/toilet01.png',
+          scale: 37.2,
+          top: 50.7,
+          left: 76.7,
+          description: 'Boulevard FloWise Right Height',
+          price: 299.00
+        },
+        toilet2: {
+          url: 'assets/images/toilet02.png',
+          scale: 37.2,
+          top: 50.7,
+          left: 76.7,
+          description: 'Town Square FloWise RH',
+          price: 299.00
+        },
+        toilet3: {
+          url: 'assets/images/toilet03.png',
+          scale: 37.2,
+          top: 50.7,
+          left: 76.7,
+          description: 'Compact Cadet 3 Right Height',
+          price: 299.00
+        },
+        bathtub1: {
+          url: 'assets/images/bathtub01.png',
+          scale: 49.2,
+          top: 37.7,
+          left: 7.7,
+          description: 'Cadet Freestanding',
+          price: 1900
+        },
+        bathtub2: {
+          url: 'assets/images/bathtub02.png',
+          scale: 44.2,
+          top: 38.7,
+          left: 6.7,
+          description: 'Spectra Cast Iron',
+          price: 1800
+        },
+        vanity1: {
+          url: 'assets/images/vanity01.png',
+          scale: 27.2,
+          top: 48.7,
+          left: 49.7,
+          description: 'Newbern Portsmouth',
+          price: 336
+        },
+        vanity2: {
+          url: 'assets/images/vanity02.png',
+          scale: 27.2,
+          top: 48.7,
+          left: 49.7,
+          description: 'Laminated Marble Console',
+          price: 270
+        }
+      };
+
+      var hotspots = {
+        toilet: { top: 49, left: 78, width: 16, height: 40 },
+        bathtub: { top: 47, left: 6, width: 25, height: 34 },
+        vanity: { top: 48, left: 49, width: 13, height: 28 }
+      }
+
+      // var groups = {
+      //   chair: [ objects.chair1, objects.chair2, objects.chair3 ]
+      // };
+
+      var groups = {
+        toilet: [ objects.toilet1, objects.toilet2, objects.toilet3 ],
+        bathtub: [ objects.bathtub1, objects.bathtub2 ],
+        vanity: [ objects.vanity1, objects.vanity2 ]
+      }
+
+      var $viewport = $('.viewport');
+
+      var renderBackground = function ($viewport, obj) {
+        var height = '100%';
+        var width = 'auto';
+
+        $(obj.image)
+          .css({
+            height: height,
+            width: width
+          })
+          .appendTo($viewport);
+
+        $viewport
+          .css({
+            width: $viewport.height() * (obj.image.width / obj.image.height)
+          });
+        
+          // var scaleW = obj.image.width / $viewport.width();
+          // var scaleH = obj.image.height / $viewport.height();
+          // // var height = scaleW > scaleH ? '100%' : 'auto';
+          // // var width = scaleW > scaleH ? 'auto' : '100%';
+          // var height = '100%';
+          // var width = 'auto';
+
+          // console.log(scaleW, scaleH, height, width);
+          
+          // var $bg = $(obj.image)
+          //   .css({
+          //     height: height,
+          //     width: width
+          //   })
+          //   .appendTo($viewport);
+
+          //   $viewport
+          //     .css({
+          //       height: scaleW > scaleH ? '100%' : $bg.height(),
+          //       width: scaleW > scaleH ? $bg.width() : '100%'
+          //     });
+      };
+
+      var renderObject = function ($viewport, obj) {
+        obj.$element = $('<div class="object unselectable">')
+          .append(obj.image)
+          .css({
+            height: obj.scale + '%',
+            top: obj.top + '%',
+            left: obj.left + '%'
+          })
+          .appendTo($viewport);
+
+        $('<div class="title unselectable">')
+          .append($('<div class="description">').text(obj.description))
+          .append($('<div class="price">').text('$' + obj.price.toFixed(2)))
+          .appendTo(obj.$element);
+      };
+
+      var renderHotSpot = function ($viewport, name, obj) {
+        obj.$element = $('<div class="hotspot unselectable">')
+          .addClass(name)
+          .css({
+            top: obj.top + '%',
+            left: obj.left + '%',
+            width: obj.width + '%',
+            height: obj.height + '%'
+          })
+          .appendTo($viewport);
+
+        var $content = $('<ul class="list">');
+        var group = groups[name];
+
+        group.forEach(function (obj) {
+          var $item = $(
+            '<li>' +
+              '<div class="description">' + obj.description + '</div>' + 
+              '<div class="price">$' + obj.price.toFixed(2) + '</div>' + 
+            '</li>'
+          ).data('object', obj);
+
+          $content.append($item);
+        });
+
+        var drop = new Drop({
+          target: obj.$element[0],
+          content: $content[0],
+          position: 'right top',
+          openOn: 'click',
+          classes: 'drop-theme-arrows-bounce'
+        });
+
+        $content.on('click', 'li', function () {
+          var object = $(this).data('object');
+          group.forEach(function (o) {
+            if (o.$element) {
+              o.$element.remove();
+              o.$element = null;
+            }
+          });
+
+          $content.find('.active').removeClass('active');
+          $(this).addClass('active');
+
+          renderObject($viewport, object);
+          drop.close();
+        });
+
+        $content.find('li:first').click();
+      };
+
+      var loadObjects = function (objects, cb) {
+        var names = Object.keys(objects);
+
+        var load = function (objectName) {
+          if (!objectName) {
+            cb();
+            return;
+          }
+
+          var object = objects[objectName];
+          object.image = new Image();
+          object.image.onload = function () {
+            load(names.shift());
+          };
+          object.image.src = object.url;
+        };
+
+        load(names.shift());
+      };
+
+      loadObjects(objects, function () {
+        renderBackground($viewport, objects.bg);
+        renderHotSpot($viewport, 'toilet', hotspots.toilet);
+        renderHotSpot($viewport, 'bathtub', hotspots.bathtub);
+        renderHotSpot($viewport, 'vanity', hotspots.vanity);
+
+        $(window).on('resize', function () {
+          renderBackground($viewport, objects.bg);
+          $('<style>body{}</style>').appendTo('head').remove();
+        });
+      });
+
+      // var image = new Image();
+      // image.onload = function () {
+      //   var ar = this.width / this.height;
+      //   var $viewport = $('.viewport');
+        
+      //   renderBackground($viewport, url, ar);
+      //   objects.forEach(function (object) {
+      //     return renderObject($viewport, object);
+      //   });
+
+      //   $(window).on('resize', function () {
+      //     renderBackground($viewport, url, ar);
+      //   });
+      // }
+      // image.src = url;
+      // var url = 'bg.jpg';
+      // var image = new Image();
+
+      // var init = function ($viewport, url, width, height) {
+      //   var aspect_ratio = width / height;
+      //   var $background = $('<div class="background">')
+      //     .appendTo($viewport)
+      //     .css('background-image', 'url(\'' + url + '\')')
+      //     .width($viewport.height() * aspect_ratio);
+      //   console.log(width, height, aspect_ratio, $viewport.width());
+      // };
+
+      // image.onload = function () {
+      //   init($('.viewport'), url, this.width, this.height);
+      // };
+
+      // image.src = url; 
+    </script>
+  </body>
+</html>
