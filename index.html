@@ -129,6 +129,14 @@
         overflow: hidden;
       }
 
+      /*.toilet .title {
+        -webkit-transform: perspective(300px) rotateY(-10deg);
+      }
+
+      .bathtub .title {
+        -webkit-transform: perspective(300px) rotateY(10deg);
+      }*/
+
       .message {
         position: absolute;
         left: 0;
@@ -309,9 +317,10 @@
           //     });
       };
 
-      var renderObject = function ($viewport, obj) {
+      var renderObject = function ($viewport, name, obj) {
         obj.$element = $('<div class="object unselectable">')
           .append(obj.image)
+          .addClass(name)
           .css({
             height: obj.scale + '%',
             top: obj.top + '%',
@@ -370,7 +379,7 @@
           $content.find('.active').removeClass('active');
           $(this).addClass('active');
 
-          renderObject($viewport, object);
+          renderObject($viewport, name, object);
           drop.close();
         });
 
